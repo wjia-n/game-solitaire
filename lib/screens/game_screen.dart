@@ -364,7 +364,7 @@ class _GameScreenState extends State<GameScreen> {
 
     if (fromElsewhere) {
       bool ok = false;
-      if (sel!.kind == PileKind.waste) {
+      if (sel.kind == PileKind.waste) {
         ok = _engine.tryMoveWasteTo(0, col);
       } else if (sel.kind == PileKind.tableau) {
         ok = _engine.tryMoveTableauStack(sel.index, sel.cardIndex, col);
@@ -377,7 +377,7 @@ class _GameScreenState extends State<GameScreen> {
 
     if (sameSpot) {
       // second tap on the same stack = smart move to foundation
-      _engine.tryAutoFoundation(sel!);
+      _engine.tryAutoFoundation(sel);
       _clearSelection();
       return;
     }
