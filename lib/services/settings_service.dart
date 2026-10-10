@@ -47,7 +47,7 @@ class SolitaireSettings extends ChangeNotifier {
   int bestTimeSecs = 0; // 0 = none yet
   int winStreak = 0;
 
-  bool isPro = false;
+  bool isPro = true; // everything unlocked — no Pro version
 
   Map<String, int> customColors = Map.of(_defaultCustomColors);
 
@@ -116,7 +116,7 @@ class SolitaireSettings extends ChangeNotifier {
     bestScore = p.getInt(_kBestScore) ?? 0;
     bestTimeSecs = p.getInt(_kBestTime) ?? 0;
     winStreak = p.getInt(_kStreak) ?? 0;
-    isPro = p.getBool(_kIsPro) ?? false;
+    isPro = true; // everything unlocked
     for (final k in _defaultCustomColors.keys) {
       customColors[k] = p.getInt('$_kCustomPrefix$k') ?? _defaultCustomColors[k]!;
     }
