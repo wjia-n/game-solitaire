@@ -165,54 +165,7 @@ class _ProScreenState extends State<ProScreen> {
                             color: t.ink.withValues(alpha: 0.7),
                             fontSize: 14),
                         textAlign: TextAlign.center,
-                      )
-                    else if (store.proProduct != null) ...[
-                      Text(
-                        store.proProduct!.description.isNotEmpty
-                            ? store.proProduct!.description
-                            : 'Every felt, every card back, and the custom creator — forever.',
-                        style: TextStyle(color: t.ink, fontSize: 14),
-                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 12),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: store.purchaseInProgress,
-                        builder: (_, busy, _) => GestureDetector(
-                          onTap: busy
-                              ? () {}
-                              : () {
-                                  widget.audio.click();
-                                  store.buyPro();
-                                },
-                          child: Container(
-                            width: 260,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16),
-                              color: t.accent.withValues(alpha: 0.95),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black
-                                        .withValues(alpha: 0.45),
-                                    offset: const Offset(0, 4),
-                                    blurRadius: 10),
-                              ],
-                            ),
-                            child: Text(
-                              busy
-                                  ? 'Working…'
-                                  : 'Get PRO — ${store.proProduct!.price}',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: t.railDeep,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                     ValueListenableBuilder<String?>(
                       valueListenable: store.purchaseError,
                       builder: (_, err, _) => err == null

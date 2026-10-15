@@ -15,6 +15,9 @@ import 'package:audioplayers/audioplayers.dart';
 ///   it left off.
 /// - Every public method catches player errors; audio can never crash the app.
 class TableAudio {
+  /// Per-game pitch character (solitaire): 1.22x. Makes SFX unique.
+  static const double _pitchMul = 1.220;
+
   static const int _rate = 22050;
   final AudioPlayer _sfx = AudioPlayer();
   final AudioPlayer _music = AudioPlayer();
@@ -96,6 +99,8 @@ class TableAudio {
 
   List<double> _tone(double freq, double secs,
       {double freqEnd = 0, double attack = 0.02, double harmonics = 0.25}) {
+    freq *= _pitchMul;
+    freqEnd *= _pitchMul;
     final n = (_rate * secs).round();
     final out = List<double>.filled(n, 0);
     for (int i = 0; i < n; i++) {
@@ -171,12 +176,12 @@ class TableAudio {
       _cache.putIfAbsent(key, () => _wav(build()));
 
   Uint8List _menuBytes() => _clip('music_menu', () {
-        // Slow, cozy felt-room waltz pads, 16s loop.
+        // G# 0 – 2 – 5 – 4 warm pad, 16s loop. Unique to solitaire.
         final seq = [
-          [174.61, 220.0, 261.63], // F
-          [130.81, 164.81, 196.0], // Cm
-          [146.83, 174.61, 220.0], // Dm
-          [196.0, 246.94, 293.66], // G
+          [207.65, 261.62, 311.12],
+          [261.62, 311.12, 391.99],
+          [349.22, 415.30, 523.25],
+          [311.12, 391.99, 466.16]
         ];
         final out = <double>[];
         for (final chord in seq) {
@@ -185,30 +190,25 @@ class TableAudio {
         return out;
       });
 
+
   Uint8List _gameBytes() => _clip('music_game', () {
-        // Gentle fingerpicked-style plucks over a soft drone, 12s loop.
-        final drone = _padChord([110.0, 164.81], 12.0);
-        final plucks = [
-          329.63,
-          392.0,
-          440.0,
-          523.25,
-          440.0,
-          392.0,
-          329.63,
-          293.66
-        ];
-        final n = (_rate * 12).round();
-        final out = List<double>.from(drone);
-        for (int k = 0; k < plucks.length; k++) {
-          final start = (n * k / plucks.length).round();
-          final tone = _tone(plucks[k], 0.55, harmonics: 0.35);
-          for (int i = 0; i < tone.length && start + i < n; i++) {
-            out[start + i] += tone[i] * 0.32;
-          }
+        // G# arpeggiated 0 – 2 – 5 – 4, 16s loop. Unique to solitaire.
+        final notes = [207.65, 261.62, 311.12, 261.62, 261.62, 311.12, 391.99, 311.12, 349.22, 415.30, 523.25, 415.30, 311.12, 391.99, 466.16, 391.99];
+        final out = <double>[];
+        final noteLen = 16.0 / notes.length;
+        for (final n in notes) {
+          out.addAll(_tone(n, noteLen * 0.9, harmonics: 0.3));
+          final gap = List<double>.filled((_rate * noteLen * 0.1).round(), 0);
+          out.addAll(gap);
+        }
+        // Soft pad underneath
+        final pad = _padChord([207.65, 261.62, 311.12], 16.0);
+        for (int i = 0; i < out.length && i < pad.length; i++) {
+          out[i] += pad[i] * 0.3;
         }
         return out;
       });
+
 
   // ------------------------------------------------------------------ SFX
   Future<void> _play(Uint8List bytes) async {
