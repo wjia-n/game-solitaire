@@ -7,6 +7,7 @@ import '../theme/solitaire_themes.dart';
 import '../widgets/cards.dart';
 import 'custom_theme_screen.dart';
 import 'pro_screen.dart';
+import '../transfer/transfer_ui.dart';
 
 /// Settings: renameable player profile, audio controls, felt theme picker
 /// (14 + custom), card-back picker (10), and stats.
@@ -115,6 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+              TransferSaveTile(gameSlug: 'solitaire'),
                 _section(t, 'Player'),
                 _card(
                   t,
